@@ -1,7 +1,7 @@
 package com.bikcode.rickandmortycompose.data.model
 
 
-import com.bikcode.rickandmortycompose.domain.model.Characterr
+import com.bikcode.rickandmortycompose.domain.model.Character
 import com.google.gson.annotations.SerializedName
 
 data class CharacterDTO(
@@ -31,8 +31,8 @@ data class CharacterDTO(
     @SerializedName("url")
     val url: String
 ) {
-    fun toCharacterDomain(): Characterr =
-        Characterr(
+    fun toCharacterDomain(): Character =
+        Character(
             created,
             episode,
             gender,
