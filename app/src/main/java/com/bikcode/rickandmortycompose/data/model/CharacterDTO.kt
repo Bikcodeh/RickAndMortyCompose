@@ -8,8 +8,7 @@ data class CharacterDTO(
     @SerializedName("created")
     val created: String,
     @SerializedName("episode")
-    //TODO: EPISODIO
-    val episode: List<Any>,
+    val episode: List<String>,
     @SerializedName("gender")
     val gender: String,
     @SerializedName("id")
