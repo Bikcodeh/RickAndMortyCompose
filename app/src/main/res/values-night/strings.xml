@@ -4,4 +4,10 @@
     <string name="character_image">Character image</string>
     <string name="loading">Loading...</string>
     <string name="try_again">Please try again</string>
+    <string name="information_label">INFO</string>
+    <string name="species_label">Species</string>
+    <string name="gender_label">Gender</string>
+    <string name="status_label">Status</string>
+    <string name="location_label">Location</string>
+    <string name="origin_label">Origin</string>
 </resources>

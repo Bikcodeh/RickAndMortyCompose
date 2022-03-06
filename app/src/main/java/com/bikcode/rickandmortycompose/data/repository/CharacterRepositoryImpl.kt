@@ -8,13 +8,15 @@ import com.bikcode.rickandmortycompose.data.local.RickAndMortyDatabase
 import com.bikcode.rickandmortycompose.data.remote.CharacterService
 import com.bikcode.rickandmortycompose.domain.model.Character
 import com.bikcode.rickandmortycompose.domain.repository.CharacterRepository
+import com.bikcode.rickandmortycompose.domain.repository.LocalDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @ExperimentalPagingApi
 class CharacterRepositoryImpl @Inject constructor(
     private val characterService: CharacterService,
-    private val rickAndMortyDatabase: RickAndMortyDatabase
+    private val rickAndMortyDatabase: RickAndMortyDatabase,
+    private val localDataSource: LocalDataSource
 ) :
     CharacterRepository {
 
@@ -33,6 +35,10 @@ class CharacterRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = characterSourceFactory
         ).flow
+    }
+
+    override suspend fun getSelectedCharacter(characterId: Int): Character? {
+        return localDataSource.getSelectedCharacter(characterId = characterId)
     }
 
     companion object {

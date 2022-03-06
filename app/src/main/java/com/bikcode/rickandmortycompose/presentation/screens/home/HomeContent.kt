@@ -3,8 +3,10 @@ package com.bikcode.rickandmortycompose.presentation.screens.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.textButtonColors
@@ -19,30 +21,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberImagePainter
 import com.bikcode.rickandmortycompose.R
 import com.bikcode.rickandmortycompose.domain.model.Character
 import com.bikcode.rickandmortycompose.domain.model.Location
 import com.bikcode.rickandmortycompose.domain.model.Origin
+import com.bikcode.rickandmortycompose.navigation.Screen
 import com.bikcode.rickandmortycompose.ui.theme.*
 
 @ExperimentalFoundationApi
 @Composable
 fun HomeContent(
     navHostController: NavHostController,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    characters: LazyPagingItems<Character>,
+    state: LazyListState
 ) {
-    val characters = homeViewModel.getAllCharacters.collectAsLazyPagingItems()
     val result = handlePagingResult(characters = characters)
     var isLoading by remember { mutableStateOf(false) }
-
     isLoading = characters.loadState.append is LoadState.Loading
 
     if (characters.loadState.refresh is LoadState.Loading) {
@@ -60,19 +60,25 @@ fun HomeContent(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(all = SMALL_PADDING),
-                verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
+                verticalArrangement = Arrangement.spacedBy(SMALL_PADDING),
+                state = state
             ) {
                 items(
                     items = characters,
                     key = { character -> character.id }
-                ) { character ->
+                ) { character: Character? ->
                     character?.let {
-                        CharacterItem(character = character)
+                        CharacterItem(
+                            character = character,
+                            navHostController = navHostController
+                        )
                     }
                 }
-                item {
-                    ErrorMoreRetryItem(isVisible = result) {
-                        characters.retry()
+                if (result) {
+                    item {
+                        ErrorMoreRetryItem(isVisible = true) {
+                            characters.retry()
+                        }
                     }
                 }
             }
@@ -97,14 +103,23 @@ fun handlePagingResult(
 }
 
 @Composable
-fun CharacterItem(character: Character) {
+fun CharacterItem(
+    character: Character,
+    navHostController: NavHostController
+) {
 
     val painterCharacter = rememberImagePainter(data = character.image) {
         placeholder(R.drawable.ic_image)
         error(R.drawable.ic_broken_image)
     }
     Box(
-        modifier = Modifier.height(CHARACTER_ITEM_HEIGHT),
+        modifier = Modifier
+            .height(CHARACTER_ITEM_HEIGHT)
+            .clickable {
+                navHostController.navigate(
+                    Screen.Detail.passCharacterId(character.id)
+                )
+            },
         contentAlignment = Alignment.BottomStart
     ) {
         Surface(shape = RoundedCornerShape(size = LARGE_PADDING)) {
@@ -174,11 +189,10 @@ fun LoadingItem(isVisible: Boolean) {
 }
 
 @Composable
-fun ErrorMoreRetryItem(isVisible: Boolean, retry: () -> Unit) {
+fun ErrorMoreRetryItem(isVisible: Boolean = false, retry: () -> Unit) {
     if (isVisible) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             TextButton(
@@ -188,9 +202,9 @@ fun ErrorMoreRetryItem(isVisible: Boolean, retry: () -> Unit) {
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
-                colors = textButtonColors(backgroundColor = MaterialTheme.colors.onPrimary),
+                colors = textButtonColors(backgroundColor = MaterialTheme.colors.topAppBarBackgroundColor),
             ) {
-                Text(text = stringResource(id = R.string.try_again), color = Color.Black)
+                Text(text = stringResource(id = R.string.try_again), color = MaterialTheme.colors.topAppBarContentColor)
             }
         }
     }
@@ -225,6 +239,7 @@ fun CharacterItemPreview() {
             status = "",
             type = "",
             url = ""
-        )
+        ),
+        navHostController = rememberNavController()
     )
 }

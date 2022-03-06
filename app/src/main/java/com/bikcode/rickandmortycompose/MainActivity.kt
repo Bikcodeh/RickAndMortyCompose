@@ -3,6 +3,7 @@ package com.bikcode.rickandmortycompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.OptIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var navHostController: NavHostController
 
-    @ExperimentalFoundationApi
+    @kotlin.OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

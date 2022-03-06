@@ -13,6 +13,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 @ExperimentalPagingApi
+@OptIn(ExperimentalPagingApi::class)
 class CharacterRemoteMediator(
     private val rickAndMortyDatabase: RickAndMortyDatabase,
     private val characterService: CharacterService

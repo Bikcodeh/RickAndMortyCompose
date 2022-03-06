@@ -17,4 +17,7 @@ interface CharacterDao {
 
     @Query("DELETE FROM character")
     suspend fun clear(): Unit
+
+    @Query("SELECT * FROM character WHERE id =:characterId")
+    fun getSelectedCharacter(characterId: Int): Character?
 }
