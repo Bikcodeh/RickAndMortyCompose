@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.bikcode.rickandmortycompose.domain.model.Character
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CharacterDao {
@@ -20,4 +21,7 @@ interface CharacterDao {
 
     @Query("SELECT * FROM character WHERE id =:characterId")
     fun getSelectedCharacter(characterId: Int): Character?
+
+    @Query("SELECT * FROM character WHERE name LIKE :text")
+    fun searchCharacters(text: String): Flow<List<Character>>
 }

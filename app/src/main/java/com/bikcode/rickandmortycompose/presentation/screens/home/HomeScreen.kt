@@ -7,20 +7,23 @@ import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.bikcode.rickandmortycompose.navigation.Screen
 
 @ExperimentalFoundationApi
 @Composable
-fun HomeScreen(navHostController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel()) {
-
-    val characters = homeViewModel.getAllCharacters.collectAsLazyPagingItems()
-    val state = rememberLazyListState()
-
+fun HomeScreen(
+    navHostController: NavHostController
+) {
     Scaffold(
         topBar = {
-            HomeTopBar()
+            HomeTopBar(onSearchClicked = {
+                navHostController.navigate(Screen.Search.route)
+            })
         },
         content = {
-            HomeContent(navHostController = navHostController, characters = characters, state = state)
+            HomeContent(
+                navHostController = navHostController
+            )
         }
     )
 }

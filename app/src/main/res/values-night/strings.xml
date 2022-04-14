@@ -10,4 +10,8 @@
     <string name="status_label">Status</string>
     <string name="location_label">Location</string>
     <string name="origin_label">Origin</string>
+    <string name="close_icon">Close</string>
+    <string name="search_here_placeholder">Search here...</string>
+    <string name="search_icon">Search</string>
+    <string name="clear_text">Clear text</string>
 </resources>

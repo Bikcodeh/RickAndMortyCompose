@@ -17,8 +17,7 @@ class CharacterRepositoryImpl @Inject constructor(
     private val characterService: CharacterService,
     private val rickAndMortyDatabase: RickAndMortyDatabase,
     private val localDataSource: LocalDataSource
-) :
-    CharacterRepository {
+) : CharacterRepository {
 
     override fun getAllCharacters(): Flow<PagingData<Character>> {
 
@@ -39,6 +38,10 @@ class CharacterRepositoryImpl @Inject constructor(
 
     override suspend fun getSelectedCharacter(characterId: Int): Character? {
         return localDataSource.getSelectedCharacter(characterId = characterId)
+    }
+
+    override fun searchCharacters(text: String): Flow<List<Character>> {
+        return rickAndMortyDatabase.characterDao().searchCharacters(text = "%$text%")
     }
 
     companion object {

@@ -2,11 +2,10 @@ package com.bikcode.rickandmortycompose.presentation.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.textButtonColors
@@ -21,29 +20,34 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberImagePainter
 import com.bikcode.rickandmortycompose.R
-import com.bikcode.rickandmortycompose.domain.model.Character
-import com.bikcode.rickandmortycompose.domain.model.Location
-import com.bikcode.rickandmortycompose.domain.model.Origin
+import com.bikcode.rickandmortycompose.data.model.CharacterDTO
+import com.bikcode.rickandmortycompose.data.model.LocationDTO
+import com.bikcode.rickandmortycompose.data.model.OriginDTO
 import com.bikcode.rickandmortycompose.navigation.Screen
+import com.bikcode.rickandmortycompose.presentation.components.SearchWidget
 import com.bikcode.rickandmortycompose.ui.theme.*
 
 @ExperimentalFoundationApi
 @Composable
 fun HomeContent(
     navHostController: NavHostController,
-    characters: LazyPagingItems<Character>,
-    state: LazyListState
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
+    val characters = homeViewModel.getAllCharacters.collectAsLazyPagingItems()
+    val searchedCharacters by homeViewModel.searchedCharacters.collectAsState()
     val result = handlePagingResult(characters = characters)
     var isLoading by remember { mutableStateOf(false) }
     isLoading = characters.loadState.append is LoadState.Loading
+    var text by remember { mutableStateOf("") }
 
     if (characters.loadState.refresh is LoadState.Loading) {
         Column(
@@ -57,21 +61,39 @@ fun HomeContent(
 
     Box(contentAlignment = Alignment.BottomStart) {
         Column(modifier = Modifier.fillMaxSize()) {
+            SearchWidget(text = text, onTextChange = { newText ->
+                text = newText
+                homeViewModel.searchCharacters(text = newText)
+            })
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(all = SMALL_PADDING),
                 verticalArrangement = Arrangement.spacedBy(SMALL_PADDING),
-                state = state
             ) {
-                items(
-                    items = characters,
-                    key = { character -> character.id }
-                ) { character: Character? ->
-                    character?.let {
-                        CharacterItem(
-                            character = character,
-                            navHostController = navHostController
-                        )
+                if (searchedCharacters.count() > 0) {
+                    items(
+                        items = searchedCharacters,
+                        key = { character -> character.id }
+                    ) { character: CharacterDTO? ->
+                        character?.let {
+                            CharacterItem(
+                                character = character,
+                                navHostController = navHostController
+                            )
+                        }
+                    }
+                } else {
+                    items(
+                        items = characters,
+                        key = { character -> character.id }
+                    ) { character: CharacterDTO? ->
+                        character?.let {
+                            CharacterItem(
+                                character = character,
+                                navHostController = navHostController
+                            )
+                        }
                     }
                 }
                 if (result) {
@@ -87,9 +109,10 @@ fun HomeContent(
     }
 }
 
+
 @Composable
 fun handlePagingResult(
-    characters: LazyPagingItems<Character>
+    characters: LazyPagingItems<CharacterDTO>
 ): Boolean {
     characters.apply {
         val error = when {
@@ -104,7 +127,7 @@ fun handlePagingResult(
 
 @Composable
 fun CharacterItem(
-    character: Character,
+    character: CharacterDTO,
     navHostController: NavHostController
 ) {
 
@@ -204,7 +227,10 @@ fun ErrorMoreRetryItem(isVisible: Boolean = false, retry: () -> Unit) {
                 contentPadding = PaddingValues(3.dp),
                 colors = textButtonColors(backgroundColor = MaterialTheme.colors.topAppBarBackgroundColor),
             ) {
-                Text(text = stringResource(id = R.string.try_again), color = MaterialTheme.colors.topAppBarContentColor)
+                Text(
+                    text = stringResource(id = R.string.try_again),
+                    color = MaterialTheme.colors.topAppBarContentColor
+                )
             }
         }
     }
@@ -226,15 +252,15 @@ fun Preview() {
 @Preview
 fun CharacterItemPreview() {
     CharacterItem(
-        character = Character(
+        character = CharacterDTO(
             created = "",
             episode = listOf(),
             gender = "",
             id = 0,
             image = "",
-            location = Location(name = "", url = ""),
+            location = LocationDTO(name = "", url = ""),
             name = "Rick Sanchez",
-            origin = Origin(name = "", url = ""),
+            origin = OriginDTO(name = "", url = ""),
             species = "",
             status = "",
             type = "",

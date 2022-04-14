@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bikcode.rickandmortycompose.presentation.screens.detail.DetailScreen
 import com.bikcode.rickandmortycompose.presentation.screens.home.HomeScreen
+import com.bikcode.rickandmortycompose.presentation.screens.search.SearchScreen
 import com.bikcode.rickandmortycompose.presentation.util.Constants.DETAILS_CHARACTER_KEY
 
 @ExperimentalFoundationApi
@@ -29,6 +30,9 @@ fun SetupNavGraph(navController: NavHostController) {
         ) { backStackEntry ->
             val characterId = backStackEntry.arguments?.getInt(DETAILS_CHARACTER_KEY)
             DetailScreen(navHostController = navController, characterId = characterId ?: -1)
+        }
+        composable(route = Screen.Search.route) {
+            SearchScreen()
         }
     }
 }
