@@ -1,6 +1,7 @@
 package com.bikcode.rickandmortycompose.presentation.screens.detail
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,13 +29,7 @@ import com.bikcode.rickandmortycompose.R
 import com.bikcode.rickandmortycompose.data.model.CharacterDTO
 import com.bikcode.rickandmortycompose.data.model.LocationDTO
 import com.bikcode.rickandmortycompose.data.model.OriginDTO
-import com.bikcode.rickandmortycompose.domain.model.Character
-import com.bikcode.rickandmortycompose.domain.model.Location
-import com.bikcode.rickandmortycompose.domain.model.Origin
-import com.bikcode.rickandmortycompose.ui.theme.CHARACTER_ITEM_HEIGHT
-import com.bikcode.rickandmortycompose.ui.theme.INFO_ICON_SIZE
-import com.bikcode.rickandmortycompose.ui.theme.MEDIUM_PADDING
-import com.bikcode.rickandmortycompose.ui.theme.topAppBarContentColor
+import com.bikcode.rickandmortycompose.ui.theme.*
 
 @Composable
 fun DetailScreen(
@@ -85,7 +80,8 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
                     start.linkTo(parent.start)
                 },
                 fontSize = MaterialTheme.typography.h4.fontSize,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.textColor
             )
             IconButton(
                 modifier = Modifier
@@ -98,7 +94,7 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
                     modifier = Modifier.size(INFO_ICON_SIZE),
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(id = R.string.close_icon),
-                    tint = Color.Black
+                    tint = MaterialTheme.colors.textColor
                 )
             }
         }
@@ -116,7 +112,7 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(32.dp),
-            color = MaterialTheme.colors.primary
+            color = MaterialTheme.colors.topAppBarBackgroundColor
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -126,7 +122,8 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
             ) {
                 Text(
                     text = stringResource(id = R.string.information_label),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.LightGray
                 )
             }
         }
@@ -134,11 +131,16 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = stringResource(id = R.string.species_label), modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(id = R.string.species_label),
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colors.textColor
+            )
             Text(
                 text = character.species,
                 modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                color = MaterialTheme.colors.textColor
             )
         }
         Divider(
@@ -149,8 +151,17 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
                 .padding(horizontal = 8.dp)
         )
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.gender_label), modifier = Modifier.weight(1f))
-            Text(text = character.gender, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+            Text(
+                text = stringResource(id = R.string.gender_label),
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colors.textColor
+            )
+            Text(
+                text = character.gender,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.End,
+                color = MaterialTheme.colors.textColor
+            )
         }
         Divider(
             color = Color.LightGray,
@@ -160,8 +171,17 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
                 .padding(horizontal = 8.dp)
         )
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.status_label), modifier = Modifier.weight(1f))
-            Text(text = character.status, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+            Text(
+                text = stringResource(id = R.string.status_label),
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colors.textColor
+            )
+            Text(
+                text = character.status,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.End,
+                color = MaterialTheme.colors.textColor
+            )
         }
         Divider(
             color = Color.LightGray,
@@ -173,12 +193,14 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = stringResource(id = R.string.location_label),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colors.textColor
             )
             Text(
                 text = character.location.name,
                 modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                color = MaterialTheme.colors.textColor
             )
         }
         Divider(
@@ -189,11 +211,16 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
                 .padding(horizontal = 8.dp)
         )
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.origin_label), modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(id = R.string.origin_label),
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colors.textColor
+            )
             Text(
                 text = character.origin.name,
                 modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                color = MaterialTheme.colors.textColor
             )
         }
         Divider(

@@ -5,7 +5,6 @@ sealed class Screen(
 ) {
     object Splash: Screen(Screens.SPLASH)
     object Home: Screen(Screens.HOME)
-    object Search: Screen(Screens.SEARCH)
     object Detail: Screen(Screens.DETAIL) {
         fun passCharacterId(characterId: Int): String {
             return "detail_screen/$characterId"

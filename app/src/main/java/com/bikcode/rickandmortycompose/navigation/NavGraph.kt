@@ -1,21 +1,31 @@
 package com.bikcode.rickandmortycompose.navigation
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bikcode.rickandmortycompose.presentation.screens.detail.DetailScreen
 import com.bikcode.rickandmortycompose.presentation.screens.home.HomeScreen
-import com.bikcode.rickandmortycompose.presentation.screens.search.SearchScreen
 import com.bikcode.rickandmortycompose.presentation.util.Constants.DETAILS_CHARACTER_KEY
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
 
+@OptIn(ExperimentalAnimationApi::class)
 @ExperimentalFoundationApi
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    val springSpec = spring<IntOffset>(dampingRatio = Spring.DampingRatioMediumBouncy)
+    val tweenSpec = tween<IntOffset>(durationMillis = 2000, easing = CubicBezierEasing(0.08f,0.93f,0.68f,1.27f))
+    AnimatedNavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(route = Screen.Splash.route) {
 
         }
@@ -26,13 +36,25 @@ fun SetupNavGraph(navController: NavHostController) {
             route = Screen.Detail.route,
             arguments = listOf(navArgument(DETAILS_CHARACTER_KEY) {
                 type = NavType.IntType
-            })
+            }),
+            enterTransition = {
+                when(initialState.destination.route) {
+                    "home_screen" ->
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tweenSpec)
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when(targetState.destination.route) {
+                    "home_screen" -> {
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+                    }
+                    else -> null
+                }
+            }
         ) { backStackEntry ->
             val characterId = backStackEntry.arguments?.getInt(DETAILS_CHARACTER_KEY)
             DetailScreen(navHostController = navController, characterId = characterId ?: -1)
-        }
-        composable(route = Screen.Search.route) {
-            SearchScreen()
         }
     }
 }

@@ -3,7 +3,9 @@ package com.bikcode.rickandmortycompose.presentation.screens.home
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.bikcode.rickandmortycompose.R
@@ -23,7 +25,7 @@ fun HomeTopBar(onSearchClicked: () -> Unit) {
         actions = {
             IconButton(onClick = onSearchClicked) {
                 Icon(
-                    imageVector = Icons.Default.Search,
+                    painter = painterResource(id = R.drawable.ic_baseline_filter),
                     contentDescription = stringResource(id = R.string.search_icon)
                 )
             }
