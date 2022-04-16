@@ -14,4 +14,8 @@ class LocalDataSourceImpl(private val characterDao: CharacterDao) : LocalDataSou
     override fun searchCharacters(text: String): Flow<List<Character>> {
         return characterDao.searchCharacters(text = text)
     }
+
+    override suspend fun getCharactersByStatus(status: String): List<Character> {
+        return characterDao.getCharactersByStatus(status = status)
+    }
 }

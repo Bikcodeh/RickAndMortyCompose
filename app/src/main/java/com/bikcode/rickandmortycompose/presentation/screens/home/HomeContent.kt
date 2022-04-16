@@ -1,5 +1,6 @@
 package com.bikcode.rickandmortycompose.presentation.screens.home
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ fun HomeContent(
 ) {
     val characters = homeViewModel.getAllCharacters.collectAsLazyPagingItems()
     val searchedCharacters by homeViewModel.searchedCharacters.collectAsState()
+    val filteredCharacters by homeViewModel.filteredCharacters.collectAsState()
     val result = handlePagingResult(characters = characters)
     var isLoading by remember { mutableStateOf(false) }
     isLoading = characters.loadState.append is LoadState.Loading
@@ -74,6 +76,18 @@ fun HomeContent(
                 if (searchedCharacters.count() > 0) {
                     items(
                         items = searchedCharacters,
+                        key = { character -> character.id }
+                    ) { character: CharacterDTO? ->
+                        character?.let {
+                            CharacterItem(
+                                character = character,
+                                navHostController = navHostController
+                            )
+                        }
+                    }
+                } else if (filteredCharacters.count() > 0) {
+                    items(
+                        items = filteredCharacters,
                         key = { character -> character.id }
                     ) { character: CharacterDTO? ->
                         character?.let {
@@ -180,6 +194,23 @@ fun CharacterItem(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.topAppBarContentColor
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Canvas(modifier = Modifier.size(30.dp)) {
+                        drawCircle(
+                            color = if (character.status.lowercase() == "alive") Color.Green else Color.Red,
+                            radius = size.minDimension / 4
+                        )
+                    }
+                    Text(
+                        text = character.status,
+                        color = Color.White,
+                        fontSize = MaterialTheme.typography.subtitle1.fontSize
+                    )
+                }
             }
         }
     }
@@ -262,7 +293,7 @@ fun CharacterItemPreview() {
             name = "Rick Sanchez",
             origin = OriginDTO(name = "", url = ""),
             species = "",
-            status = "",
+            status = "Alive",
             type = "",
             url = ""
         ),

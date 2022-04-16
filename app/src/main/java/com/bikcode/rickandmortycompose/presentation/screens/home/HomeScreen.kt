@@ -14,7 +14,7 @@ fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            HomeTopBar(onSearchClicked = {})
+            HomeTopBar()
         },
         content = {
             HomeContent(

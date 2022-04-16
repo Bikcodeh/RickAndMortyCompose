@@ -11,4 +11,5 @@ interface CharacterRepository {
     suspend fun getSelectedCharacter(characterId: Int): Character?
     fun searchCharacters(text: String): Flow<List<Character>>
     suspend fun getEpisode(episodesUrl: List<String>): Flow<Resource<List<Episode>>>
+    suspend fun getCharactersByStatus(status: String): List<Character>
 }

@@ -15,4 +15,7 @@
     <string name="search_icon">Search</string>
     <string name="clear_text">Clear text</string>
     <string name="episodes_label">Episodes</string>
+    <string name="alive_label">Alive</string>
+    <string name="dead_label">Dead</string>
+    <string name="all_label">All</string>
 </resources>

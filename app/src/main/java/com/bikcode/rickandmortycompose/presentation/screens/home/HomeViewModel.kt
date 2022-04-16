@@ -13,7 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +26,9 @@ class HomeViewModel @Inject constructor(
     private val _searchedCharacters = MutableStateFlow<List<CharacterDTO>>(emptyList())
     val searchedCharacters = _searchedCharacters
 
+    private val _filteredCharacters = MutableStateFlow<List<CharacterDTO>>(emptyList())
+    val filteredCharacters = _filteredCharacters
+
     var state by mutableStateOf(HomeState())
     private var searchJob: Job? = null
 
@@ -32,15 +36,18 @@ class HomeViewModel @Inject constructor(
         it.map { character -> character.toCharacterDTO() }
     }
 
-    /*fun searchCharacters(text: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            characterRepository.searchCharacters(text = text)
-                .map { it.map { character -> character.toCharacterDTO() } }
-                .collect {
-                    _searchedCharacters.value = it
-                }
+
+    fun filterCharacters(status: String) {
+        viewModelScope.launch {
+            if (status == "all") {
+                _filteredCharacters.value = emptyList()
+            } else {
+                _filteredCharacters.value =
+                    characterRepository.getCharactersByStatus(status = status)
+                        .map { it.toCharacterDTO() }
+            }
         }
-    }*/
+    }
 
     fun searchCharacters(text: String) {
         searchJob?.cancel()

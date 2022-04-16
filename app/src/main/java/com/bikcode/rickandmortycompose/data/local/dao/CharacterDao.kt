@@ -24,4 +24,7 @@ interface CharacterDao {
 
     @Query("SELECT * FROM character WHERE name LIKE :text")
     fun searchCharacters(text: String): Flow<List<Character>>
+
+    @Query("SELECT * FROM character WHERE status = :status")
+    suspend fun getCharactersByStatus(status: String): List<Character>
 }

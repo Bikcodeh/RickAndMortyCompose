@@ -73,6 +73,10 @@ class CharacterRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getCharactersByStatus(status: String): List<Character> {
+        return localDataSource.getCharactersByStatus(status = status)
+    }
+
     companion object {
         const val NETWORK_PAGE_SIZE = 20
     }
