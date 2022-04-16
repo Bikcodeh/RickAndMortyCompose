@@ -14,4 +14,5 @@
     <string name="search_here_placeholder">Search here...</string>
     <string name="search_icon">Search</string>
     <string name="clear_text">Clear text</string>
+    <string name="episodes_label">Episodes</string>
 </resources>

@@ -27,3 +27,7 @@ val Colors.topAppBarBackgroundColor
 val Colors.textColor
     @Composable
     get() = if(isLight) Color.Black else LightGray
+
+val Colors.cardBackgroundColor
+    @Composable
+    get() = if(isLight) Color.White else Color.Black.copy(alpha = 0.2f)

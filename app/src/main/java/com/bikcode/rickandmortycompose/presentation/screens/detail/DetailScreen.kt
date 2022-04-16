@@ -1,10 +1,10 @@
 package com.bikcode.rickandmortycompose.presentation.screens.detail
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -27,6 +27,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.bikcode.rickandmortycompose.R
 import com.bikcode.rickandmortycompose.data.model.CharacterDTO
+import com.bikcode.rickandmortycompose.data.model.EpisodeDTO
 import com.bikcode.rickandmortycompose.data.model.LocationDTO
 import com.bikcode.rickandmortycompose.data.model.OriginDTO
 import com.bikcode.rickandmortycompose.ui.theme.*
@@ -37,13 +38,21 @@ fun DetailScreen(
     characterId: Int,
     detailViewModel: DetailViewModel = hiltViewModel()
 ) {
+    val state = detailViewModel.state
+
     LaunchedEffect(key1 = true) {
         detailViewModel.getSelectedCharacter(characterId = characterId)
     }
     val characterSelected by detailViewModel.characterSelected.collectAsState()
 
+    LaunchedEffect(key1 = characterSelected) {
+        characterSelected?.let {
+            detailViewModel.getEpisodes(it.episode)
+        }
+    }
+
     characterSelected?.let {
-        DetailContent(character = it, onCloseClicked = {
+        DetailContent(character = it, state, onCloseClicked = {
             navHostController.popBackStack()
         })
     }
@@ -51,7 +60,7 @@ fun DetailScreen(
 
 
 @Composable
-fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
+fun DetailContent(character: CharacterDTO, state: DetailState, onCloseClicked: () -> Unit) {
     val modifier = Modifier
         .fillMaxWidth()
         .height(40.dp)
@@ -65,172 +74,249 @@ fun DetailContent(character: CharacterDTO, onCloseClicked: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(state = rememberScrollState())
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = MEDIUM_PADDING, vertical = MEDIUM_PADDING)
-        ) {
-            val (characterName, closeButton) = createRefs()
-            Text(
-                text = character.name,
-                modifier = Modifier.constrainAs(characterName) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                },
-                fontSize = MaterialTheme.typography.h4.fontSize,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.textColor
-            )
-            IconButton(
-                modifier = Modifier
-                    .constrainAs(closeButton) {
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                    },
-                onClick = { onCloseClicked() }) {
-                Icon(
-                    modifier = Modifier.size(INFO_ICON_SIZE),
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(id = R.string.close_icon),
-                    tint = MaterialTheme.colors.textColor
+        LazyColumn() {
+            item {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = MEDIUM_PADDING, vertical = MEDIUM_PADDING)
+                ) {
+                    val (characterName, closeButton) = createRefs()
+                    Text(
+                        text = character.name,
+                        modifier = Modifier.constrainAs(characterName) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                        },
+                        fontSize = MaterialTheme.typography.h4.fontSize,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.textColor
+                    )
+                    IconButton(
+                        modifier = Modifier
+                            .constrainAs(closeButton) {
+                                end.linkTo(parent.end)
+                                top.linkTo(parent.top)
+                            },
+                        onClick = { onCloseClicked() }) {
+                        Icon(
+                            modifier = Modifier.size(INFO_ICON_SIZE),
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(id = R.string.close_icon),
+                            tint = MaterialTheme.colors.textColor
+                        )
+                    }
+                }
+                Image(
+                    painter = painterCharacter,
+                    contentDescription = stringResource(id = R.string.character_image),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(CHARACTER_ITEM_HEIGHT)
+                        .fillMaxWidth()
                 )
-            }
-        }
-        Image(
-            painter = painterCharacter,
-            contentDescription = stringResource(id = R.string.character_image),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(CHARACTER_ITEM_HEIGHT)
-                .fillMaxWidth()
-        )
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp),
-            color = MaterialTheme.colors.topAppBarBackgroundColor
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = MEDIUM_PADDING)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.information_label),
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Color.LightGray
+                Spacer(modifier = Modifier.height(16.dp))
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(32.dp),
+                    color = MaterialTheme.colors.topAppBarBackgroundColor
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = MEDIUM_PADDING)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.information_label),
+                            modifier = Modifier.fillMaxWidth(),
+                            color = Color.LightGray
+                        )
+                    }
+                }
+                Row(
+                    modifier = modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.species_label),
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colors.textColor
+                    )
+                    Text(
+                        text = character.species,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.End,
+                        color = MaterialTheme.colors.textColor
+                    )
+                }
+                Divider(
+                    color = Color.LightGray,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .padding(horizontal = 8.dp)
                 )
+                Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.gender_label),
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colors.textColor
+                    )
+                    Text(
+                        text = character.gender,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.End,
+                        color = MaterialTheme.colors.textColor
+                    )
+                }
+                Divider(
+                    color = Color.LightGray,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .padding(horizontal = 8.dp)
+                )
+                Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.status_label),
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colors.textColor
+                    )
+                    Text(
+                        text = character.status,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.End,
+                        color = MaterialTheme.colors.textColor
+                    )
+                }
+                Divider(
+                    color = Color.LightGray,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .padding(horizontal = 8.dp)
+                )
+                Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.location_label),
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colors.textColor
+                    )
+                    Text(
+                        text = character.location.name,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.End,
+                        color = MaterialTheme.colors.textColor
+                    )
+                }
+                Divider(
+                    color = Color.LightGray,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .padding(horizontal = 8.dp)
+                )
+                Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.origin_label),
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colors.textColor
+                    )
+                    Text(
+                        text = character.origin.name,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.End,
+                        color = MaterialTheme.colors.textColor
+                    )
+                }
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(32.dp),
+                    color = MaterialTheme.colors.topAppBarBackgroundColor
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = MEDIUM_PADDING)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.episodes_label),
+                            modifier = Modifier.fillMaxWidth(),
+                            color = Color.LightGray
+                        )
+                    }
+                }
+            }
+            if (state.isLoading) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else {
+                items(state.episodes, key = { it.name }) { episode ->
+                    EpisodeItem(episodeDTO = episode)
+                }
             }
         }
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
+    }
+}
+
+@Composable
+fun EpisodeItem(episodeDTO: EpisodeDTO) {
+    Card(
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+        shape = Shapes.medium,
+        elevation = 8.dp,
+        border = BorderStroke(1.dp, Color.LightGray),
+        backgroundColor = MaterialTheme.colors.cardBackgroundColor
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = R.string.species_label),
-                modifier = Modifier.weight(1f),
+                text = episodeDTO.name, modifier = Modifier,
+                fontSize = MaterialTheme.typography.subtitle1.fontSize,
                 color = MaterialTheme.colors.textColor
             )
             Text(
-                text = character.species,
-                modifier = Modifier.weight(1f),
+                text = episodeDTO.airDate,
+                modifier = Modifier,
+                fontSize = MaterialTheme.typography.caption.fontSize,
+                color = MaterialTheme.colors.textColor
+            )
+            Text(
+                text = episodeDTO.episode,
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = MaterialTheme.typography.subtitle2.fontSize,
                 textAlign = TextAlign.End,
                 color = MaterialTheme.colors.textColor
             )
         }
-        Divider(
-            color = Color.LightGray,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(horizontal = 8.dp)
-        )
-        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(id = R.string.gender_label),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colors.textColor
-            )
-            Text(
-                text = character.gender,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End,
-                color = MaterialTheme.colors.textColor
-            )
-        }
-        Divider(
-            color = Color.LightGray,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(horizontal = 8.dp)
-        )
-        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(id = R.string.status_label),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colors.textColor
-            )
-            Text(
-                text = character.status,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End,
-                color = MaterialTheme.colors.textColor
-            )
-        }
-        Divider(
-            color = Color.LightGray,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(horizontal = 8.dp)
-        )
-        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(id = R.string.location_label),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colors.textColor
-            )
-            Text(
-                text = character.location.name,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End,
-                color = MaterialTheme.colors.textColor
-            )
-        }
-        Divider(
-            color = Color.LightGray,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(horizontal = 8.dp)
-        )
-        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(id = R.string.origin_label),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colors.textColor
-            )
-            Text(
-                text = character.origin.name,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End,
-                color = MaterialTheme.colors.textColor
-            )
-        }
-        Divider(
-            color = Color.LightGray,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(horizontal = 8.dp)
-        )
     }
+}
+
+@Preview
+@Composable
+fun EpisodeItemPreview() {
+    EpisodeItem(
+        episodeDTO = EpisodeDTO(
+            "Welcome to Racon City",
+            "1995/09/14",
+            "S1E1"
+        )
+    )
 }
 
 @Preview(showBackground = true)
@@ -251,6 +337,7 @@ fun DetailContentPreview() {
             type = "",
             url = ""
         ),
-        onCloseClicked = {}
+        onCloseClicked = {},
+        state = DetailState()
     )
 }
