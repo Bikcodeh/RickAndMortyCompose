@@ -18,4 +18,5 @@
     <string name="alive_label">Alive</string>
     <string name="dead_label">Dead</string>
     <string name="all_label">All</string>
+    <string name="error">Ups! Something just happened.</string>
 </resources>

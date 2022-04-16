@@ -61,65 +61,85 @@ fun HomeContent(
         }
     }
 
-    Box(contentAlignment = Alignment.BottomStart) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            SearchWidget(text = text, onTextChange = { newText ->
-                text = newText
-                homeViewModel.searchCharacters(text = newText)
-            })
+    if (result) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.error),
+                color = MaterialTheme.colors.textColor
+            )
+            ErrorMoreRetryItem(isVisible = true) {
+                characters.retry()
+            }
+        }
+    } else {
+        Box(contentAlignment = Alignment.BottomStart) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SearchWidget(text = text, onTextChange = { newText ->
+                    text = newText
+                    homeViewModel.searchCharacters(text = newText)
+                })
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(all = SMALL_PADDING),
-                verticalArrangement = Arrangement.spacedBy(SMALL_PADDING),
-            ) {
-                if (searchedCharacters.count() > 0) {
-                    items(
-                        items = searchedCharacters,
-                        key = { character -> character.id }
-                    ) { character: CharacterDTO? ->
-                        character?.let {
-                            CharacterItem(
-                                character = character,
-                                navHostController = navHostController
-                            )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(all = SMALL_PADDING),
+                    verticalArrangement = Arrangement.spacedBy(SMALL_PADDING),
+                ) {
+                    when {
+                        searchedCharacters.count() > 0 -> {
+                            items(
+                                items = searchedCharacters,
+                                key = { character -> character.id }
+                            ) { character: CharacterDTO? ->
+                                character?.let {
+                                    CharacterItem(
+                                        character = character,
+                                        navHostController = navHostController
+                                    )
+                                }
+                            }
+                        }
+                        filteredCharacters.count() > 0 -> {
+                            items(
+                                items = filteredCharacters,
+                                key = { character -> character.id }
+                            ) { character: CharacterDTO? ->
+                                character?.let {
+                                    CharacterItem(
+                                        character = character,
+                                        navHostController = navHostController
+                                    )
+                                }
+                            }
+                        }
+                        else -> {
+                            items(
+                                items = characters,
+                                key = { character -> character.id }
+                            ) { character: CharacterDTO? ->
+                                character?.let {
+                                    CharacterItem(
+                                        character = character,
+                                        navHostController = navHostController
+                                    )
+                                }
+                            }
                         }
                     }
-                } else if (filteredCharacters.count() > 0) {
-                    items(
-                        items = filteredCharacters,
-                        key = { character -> character.id }
-                    ) { character: CharacterDTO? ->
-                        character?.let {
-                            CharacterItem(
-                                character = character,
-                                navHostController = navHostController
-                            )
-                        }
-                    }
-                } else {
-                    items(
-                        items = characters,
-                        key = { character -> character.id }
-                    ) { character: CharacterDTO? ->
-                        character?.let {
-                            CharacterItem(
-                                character = character,
-                                navHostController = navHostController
-                            )
-                        }
-                    }
-                }
-                if (result) {
-                    item {
-                        ErrorMoreRetryItem(isVisible = true) {
-                            characters.retry()
+                    if (result) {
+                        item {
+                            ErrorMoreRetryItem(isVisible = true) {
+                                characters.retry()
+                            }
                         }
                     }
                 }
             }
+            LoadingItem(isVisible = isLoading)
         }
-        LoadingItem(isVisible = isLoading)
     }
 }
 
