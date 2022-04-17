@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,7 +48,8 @@ fun DetailScreen(
 
     LaunchedEffect(key1 = characterSelected) {
         characterSelected?.let {
-            detailViewModel.getEpisodes(it.episode)
+            if(state.episodes.isEmpty())
+                detailViewModel.getEpisodes(it.episode)
         }
     }
 
@@ -141,6 +143,11 @@ fun DetailContent(character: CharacterDTO, state: DetailState, onCloseClicked: (
                     modifier = modifier,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_biotech),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
                     Text(
                         text = stringResource(id = R.string.species_label),
                         modifier = Modifier.weight(1f),
@@ -158,9 +165,15 @@ fun DetailContent(character: CharacterDTO, state: DetailState, onCloseClicked: (
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 16.dp)
                 )
                 Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(
+                            id = if (character.gender == "Male") R.drawable.ic_gender_male else R.drawable.ic_gender_female
+                        ), contentDescription = null,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
                     Text(
                         text = stringResource(id = R.string.gender_label),
                         modifier = Modifier.weight(1f),
@@ -178,9 +191,14 @@ fun DetailContent(character: CharacterDTO, state: DetailState, onCloseClicked: (
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 16.dp)
                 )
                 Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_status),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
                     Text(
                         text = stringResource(id = R.string.status_label),
                         modifier = Modifier.weight(1f),
@@ -198,9 +216,14 @@ fun DetailContent(character: CharacterDTO, state: DetailState, onCloseClicked: (
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 16.dp)
                 )
                 Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_map_black),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
                     Text(
                         text = stringResource(id = R.string.location_label),
                         modifier = Modifier.weight(1f),
@@ -218,9 +241,14 @@ fun DetailContent(character: CharacterDTO, state: DetailState, onCloseClicked: (
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 16.dp)
                 )
                 Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_origin),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
                     Text(
                         text = stringResource(id = R.string.origin_label),
                         modifier = Modifier.weight(1f),

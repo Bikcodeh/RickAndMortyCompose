@@ -3,7 +3,25 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_baseline_biotech.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_baseline_biotech2.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_biotech.xml" value="0.1945" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_biotech2.xml" value="0.1075" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_gender_female.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_gender_male.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_map_black.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_map_black2.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_origin.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/ic_status2.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/outline_location.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/outline_location2.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable-night/outline_map2.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable/ic_baseline_biotech.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable/ic_map_black.xml" value="0.232" />
         <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable/outline_female_20.xml" value="0.37083333333333335" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable/outline_location.xml" value="0.232" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable/outline_male_20.xml" value="0.1075" />
+        <entry key="..\:/Users/Bikcode/AndroidStudioProjects/RickAndMortyCompose/app/src/main/res/drawable/outline_map.xml" value="0.232" />
       </map>
     </option>
   </component>
