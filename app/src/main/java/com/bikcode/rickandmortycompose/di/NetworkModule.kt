@@ -1,6 +1,7 @@
 package com.bikcode.rickandmortycompose.di
 
 import com.bikcode.rickandmortycompose.data.remote.CharacterService
+import com.bikcode.rickandmortycompose.data.remote.EpisodeService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,6 +46,11 @@ object NetworkModule {
     @Singleton
     fun characterServiceProvider(retrofit: Retrofit): CharacterService =
         retrofit.create(CharacterService::class.java)
+
+    @Provides
+    @Singleton
+    fun episodeServiceProvider(retrofit: Retrofit): EpisodeService =
+        retrofit.create(EpisodeService::class.java)
 
 }
 

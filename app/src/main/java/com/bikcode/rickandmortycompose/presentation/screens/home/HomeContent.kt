@@ -1,10 +1,12 @@
 package com.bikcode.rickandmortycompose.presentation.screens.home
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.textButtonColors
@@ -19,18 +21,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberImagePainter
 import com.bikcode.rickandmortycompose.R
-import com.bikcode.rickandmortycompose.domain.model.Character
-import com.bikcode.rickandmortycompose.domain.model.Location
-import com.bikcode.rickandmortycompose.domain.model.Origin
+import com.bikcode.rickandmortycompose.data.model.CharacterDTO
+import com.bikcode.rickandmortycompose.data.model.LocationDTO
+import com.bikcode.rickandmortycompose.data.model.OriginDTO
+import com.bikcode.rickandmortycompose.navigation.Screen
+import com.bikcode.rickandmortycompose.presentation.components.SearchWidget
 import com.bikcode.rickandmortycompose.ui.theme.*
 
 @ExperimentalFoundationApi
@@ -40,10 +44,12 @@ fun HomeContent(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val characters = homeViewModel.getAllCharacters.collectAsLazyPagingItems()
+    val searchedCharacters by homeViewModel.searchedCharacters.collectAsState()
+    val filteredCharacters by homeViewModel.filteredCharacters.collectAsState()
     val result = handlePagingResult(characters = characters)
     var isLoading by remember { mutableStateOf(false) }
-
     isLoading = characters.loadState.append is LoadState.Loading
+    var text by remember { mutableStateOf("") }
 
     if (characters.loadState.refresh is LoadState.Loading) {
         Column(
@@ -55,35 +61,92 @@ fun HomeContent(
         }
     }
 
-    Box(contentAlignment = Alignment.BottomStart) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(all = SMALL_PADDING),
-                verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
-            ) {
-                items(
-                    items = characters,
-                    key = { character -> character.id }
-                ) { character ->
-                    character?.let {
-                        CharacterItem(character = character)
+    if (result) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.error),
+                color = MaterialTheme.colors.textColor
+            )
+            ErrorMoreRetryItem(isVisible = true) {
+                characters.retry()
+            }
+        }
+    } else {
+        Box(contentAlignment = Alignment.BottomStart) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SearchWidget(text = text, onTextChange = { newText ->
+                    text = newText
+                    homeViewModel.searchCharacters(text = newText)
+                })
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(all = SMALL_PADDING),
+                    verticalArrangement = Arrangement.spacedBy(SMALL_PADDING),
+                ) {
+                    when {
+                        searchedCharacters.count() > 0 -> {
+                            items(
+                                items = searchedCharacters,
+                                key = { character -> character.id }
+                            ) { character: CharacterDTO? ->
+                                character?.let {
+                                    CharacterItem(
+                                        character = character,
+                                        navHostController = navHostController
+                                    )
+                                }
+                            }
+                        }
+                        filteredCharacters.count() > 0 -> {
+                            items(
+                                items = filteredCharacters,
+                                key = { character -> character.id }
+                            ) { character: CharacterDTO? ->
+                                character?.let {
+                                    CharacterItem(
+                                        character = character,
+                                        navHostController = navHostController
+                                    )
+                                }
+                            }
+                        }
+                        else -> {
+                            items(
+                                items = characters,
+                                key = { character -> character.id }
+                            ) { character: CharacterDTO? ->
+                                character?.let {
+                                    CharacterItem(
+                                        character = character,
+                                        navHostController = navHostController
+                                    )
+                                }
+                            }
+                        }
                     }
-                }
-                item {
-                    ErrorMoreRetryItem(isVisible = result) {
-                        characters.retry()
+                    if (result) {
+                        item {
+                            ErrorMoreRetryItem(isVisible = true) {
+                                characters.retry()
+                            }
+                        }
                     }
                 }
             }
+            LoadingItem(isVisible = isLoading)
         }
-        LoadingItem(isVisible = isLoading)
     }
 }
 
+
 @Composable
 fun handlePagingResult(
-    characters: LazyPagingItems<Character>
+    characters: LazyPagingItems<CharacterDTO>
 ): Boolean {
     characters.apply {
         val error = when {
@@ -97,14 +160,23 @@ fun handlePagingResult(
 }
 
 @Composable
-fun CharacterItem(character: Character) {
+fun CharacterItem(
+    character: CharacterDTO,
+    navHostController: NavHostController
+) {
 
     val painterCharacter = rememberImagePainter(data = character.image) {
         placeholder(R.drawable.ic_image)
         error(R.drawable.ic_broken_image)
     }
     Box(
-        modifier = Modifier.height(CHARACTER_ITEM_HEIGHT),
+        modifier = Modifier
+            .height(CHARACTER_ITEM_HEIGHT)
+            .clickable {
+                navHostController.navigate(
+                    Screen.Detail.passCharacterId(character.id)
+                )
+            },
         contentAlignment = Alignment.BottomStart
     ) {
         Surface(shape = RoundedCornerShape(size = LARGE_PADDING)) {
@@ -142,6 +214,23 @@ fun CharacterItem(character: Character) {
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.topAppBarContentColor
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Canvas(modifier = Modifier.size(30.dp)) {
+                        drawCircle(
+                            color = if (character.status.lowercase() == "alive") Color.Green else Color.Red,
+                            radius = size.minDimension / 4
+                        )
+                    }
+                    Text(
+                        text = character.status,
+                        color = Color.White,
+                        fontSize = MaterialTheme.typography.subtitle1.fontSize
+                    )
+                }
             }
         }
     }
@@ -174,11 +263,10 @@ fun LoadingItem(isVisible: Boolean) {
 }
 
 @Composable
-fun ErrorMoreRetryItem(isVisible: Boolean, retry: () -> Unit) {
+fun ErrorMoreRetryItem(isVisible: Boolean = false, retry: () -> Unit) {
     if (isVisible) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             TextButton(
@@ -188,9 +276,12 @@ fun ErrorMoreRetryItem(isVisible: Boolean, retry: () -> Unit) {
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
-                colors = textButtonColors(backgroundColor = MaterialTheme.colors.onPrimary),
+                colors = textButtonColors(backgroundColor = MaterialTheme.colors.topAppBarBackgroundColor),
             ) {
-                Text(text = stringResource(id = R.string.try_again), color = Color.Black)
+                Text(
+                    text = stringResource(id = R.string.try_again),
+                    color = MaterialTheme.colors.topAppBarContentColor
+                )
             }
         }
     }
@@ -212,19 +303,20 @@ fun Preview() {
 @Preview
 fun CharacterItemPreview() {
     CharacterItem(
-        character = Character(
+        character = CharacterDTO(
             created = "",
             episode = listOf(),
             gender = "",
             id = 0,
             image = "",
-            location = Location(name = "", url = ""),
+            location = LocationDTO(name = "", url = ""),
             name = "Rick Sanchez",
-            origin = Origin(name = "", url = ""),
+            origin = OriginDTO(name = "", url = ""),
             species = "",
-            status = "",
+            status = "Alive",
             type = "",
             url = ""
-        )
+        ),
+        navHostController = rememberNavController()
     )
 }

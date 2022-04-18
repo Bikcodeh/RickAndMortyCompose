@@ -3,6 +3,8 @@ package com.bikcode.rickandmortycompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.OptIn
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -13,19 +15,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bikcode.rickandmortycompose.navigation.SetupNavGraph
 import com.bikcode.rickandmortycompose.ui.theme.RickAndMortyComposeTheme
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalAnimationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var navHostController: NavHostController
 
-    @ExperimentalFoundationApi
+    @kotlin.OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             RickAndMortyComposeTheme {
-                navHostController = rememberNavController()
+                navHostController = rememberAnimatedNavController()
                 SetupNavGraph(navController = navHostController)
             }
         }
