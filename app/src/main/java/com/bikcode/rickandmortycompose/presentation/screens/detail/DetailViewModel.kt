@@ -30,14 +30,14 @@ class DetailViewModel @Inject constructor(
     var state by mutableStateOf(DetailState())
 
     fun getSelectedCharacter(characterId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _characterSelected.value =
                 getSelectedCharacterUC(characterId = characterId)?.toCharacterDTO()
         }
     }
 
     fun getEpisodes(episodesUrl: List<String>) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             getEpisodesUC(episodesUrl).collect {
                 when(it) {
                     is Resource.Error -> {
