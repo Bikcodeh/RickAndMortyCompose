@@ -12,12 +12,9 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.*
 
 @ExperimentalCoroutinesApi
@@ -41,12 +38,10 @@ class DetailViewModelTest {
             getSelectedCharacterUC,
             getEpisodesUC
         )
-        Dispatchers.setMain(Dispatchers.Unconfined)
     }
 
     @After
     fun tearDown() {
-        Dispatchers.resetMain()
     }
 
     @Test
@@ -62,7 +57,6 @@ class DetailViewModelTest {
             characterDTO,
             detailViewModel.characterSelected.value
         )
-
         coVerify { getSelectedCharacterUC(1) }
     }
 
@@ -79,26 +73,87 @@ class DetailViewModelTest {
             null,
             detailViewModel.characterSelected.value
         )
-
         coVerify { getSelectedCharacterUC(1) }
     }
 
     @Test
-    fun getState() = runTest {
-        val response = listOf(
-            EpisodeDTO(name = "test", airDate = "", episode = "")
-        )
+    fun `getEpisodes should return all the data`() = runTest {
+        val expectedResponse = listOf(EpisodeDTO(name = "test", airDate = "", episode = ""))
+        //Given
         coEvery { getEpisodesUC(listOf("1", "2")) } returns flow {
             emit(Resource.Success(listOf(Episode(name = "test", airDate = "", episode = ""))))
         }
 
-        detailViewModel.getEpisodes(listOf("1", ""))
+        //When
+        detailViewModel.getEpisodes(listOf("1", "2"))
 
+        //Then
         Assert.assertEquals(
-            response,
+            expectedResponse,
             detailViewModel.state.episodes
         )
-
         coVerify { getEpisodesUC(listOf("1", "2")) }
+    }
+
+    @Test
+    fun `getEpisodes should return null data`() = runTest {
+        //Given
+        coEvery { getEpisodesUC(listOf("1", "2")) } returns flow {
+            emit(Resource.Success(data = null))
+        }
+
+        //When
+        detailViewModel.getEpisodes(listOf("1", "2"))
+
+        //Then
+        Assert.assertEquals(
+            emptyList<EpisodeDTO>(),
+            detailViewModel.state.episodes
+        )
+        coVerify { getEpisodesUC(listOf("1", "2")) }
+    }
+
+    @Test
+    fun `getEpisodes should return a loading state`() = runTest {
+        //Given
+        coEvery { getEpisodesUC(listOf("1", "2")) } returns flow {
+            emit(Resource.Loading(isLoading = true))
+        }
+
+        //When
+        detailViewModel.getEpisodes(listOf("1", "2"))
+
+        //Then
+        Assert.assertEquals(
+            true,
+            detailViewModel.state.isLoading
+        )
+        coVerify { getEpisodesUC(listOf("1", "2")) }
+    }
+
+    @Test
+    fun `getEpisodes should return a error state`() = runTest {
+        //Given
+        coEvery { getEpisodesUC(listOf("1", "2")) } returns flow {
+            emit(Resource.Error("Ups! Something Happened"))
+        }
+
+        //When
+        detailViewModel.getEpisodes(listOf("1", "2"))
+
+        //Then
+        Assert.assertEquals(
+            "Ups! Something Happened",
+            detailViewModel.state.error
+        )
+        coVerify { getEpisodesUC(listOf("1", "2")) }
+    }
+
+    @Test
+    fun `state should return a default state`() {
+        Assert.assertEquals(
+            DetailState(),
+            detailViewModel.state
+        )
     }
 }

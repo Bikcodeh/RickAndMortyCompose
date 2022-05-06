@@ -11,10 +11,8 @@ import com.bikcode.rickandmortycompose.domain.use_case.GetEpisodesUC
 import com.bikcode.rickandmortycompose.domain.use_case.GetSelectedCharacterUC
 import com.bikcode.rickandmortycompose.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,7 +37,7 @@ class DetailViewModel @Inject constructor(
     fun getEpisodes(episodesUrl: List<String>) {
         viewModelScope.launch {
             getEpisodesUC(episodesUrl).collect {
-                when(it) {
+                when (it) {
                     is Resource.Error -> {
                         state = state.copy(error = it.message)
                     }
