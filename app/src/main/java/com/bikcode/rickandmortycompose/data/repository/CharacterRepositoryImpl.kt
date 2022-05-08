@@ -28,7 +28,7 @@ class CharacterRepositoryImpl @Inject constructor(
 
     override fun getAllCharacters(): Flow<PagingData<Character>> {
 
-        val characterSourceFactory = { rickAndMortyDatabase.characterDao().getAllCharacters() }
+        val characterSourceFactory = { localDataSource.getAllCharacters() }
 
         return Pager(
             config = PagingConfig(
@@ -48,7 +48,7 @@ class CharacterRepositoryImpl @Inject constructor(
     }
 
     override fun searchCharacters(text: String): Flow<List<Character>> {
-        return rickAndMortyDatabase.characterDao().searchCharacters(text = "%$text%")
+        return localDataSource.searchCharacters(text = "%$text%")
     }
 
     override suspend fun getEpisode(episodesUrl: List<String>): Flow<Resource<List<Episode>>> {
@@ -69,6 +69,9 @@ class CharacterRepositoryImpl @Inject constructor(
             } catch (e: HttpException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = "Couldn't load episodes", null))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit(Resource.Error(message = "Unexpected error", null))
             }
         }
     }

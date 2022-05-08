@@ -1,9 +1,11 @@
 package com.bikcode.rickandmortycompose.util
 
 import com.bikcode.rickandmortycompose.data.model.CharacterDTO
+import com.bikcode.rickandmortycompose.data.model.EpisodeDTO
 import com.bikcode.rickandmortycompose.data.model.LocationDTO
 import com.bikcode.rickandmortycompose.data.model.OriginDTO
 import com.bikcode.rickandmortycompose.domain.model.Character
+import com.bikcode.rickandmortycompose.domain.model.Episode
 import com.bikcode.rickandmortycompose.domain.model.Location
 import com.bikcode.rickandmortycompose.domain.model.Origin
 
@@ -35,3 +37,9 @@ val characterDTO = CharacterDTO(
     type = "",
     url = ""
 )
+
+val episode = Episode(
+    name = "test", airDate = "", episode = ""
+)
+
+val episodeDTO = EpisodeDTO(name = "test", airDate = "", episode = "")
