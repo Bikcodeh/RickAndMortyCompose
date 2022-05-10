@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.bikcode.rickandmortycompose.data.remote.CharacterService
 import com.bikcode.rickandmortycompose.domain.model.Character
+import com.bikcode.rickandmortycompose.domain.repository.RemoteDataSource
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -11,7 +12,7 @@ import javax.inject.Inject
 private const val CHARACTER_STARTING_PAGE_INDEX = 1
 
 class CharacterPagingSource @Inject constructor(
-    private val characterService: CharacterService
+    private val remoteDataSource: RemoteDataSource
 ) : PagingSource<Int, Character>() {
 
     override fun getRefreshKey(state: PagingState<Int, Character>): Int? {
@@ -24,7 +25,7 @@ class CharacterPagingSource @Inject constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Character> {
         val position = params.key ?: CHARACTER_STARTING_PAGE_INDEX
         return try {
-            val response = characterService.getAllCharacters(page = position)
+            val response = remoteDataSource.getAllCharacters(page = position)
             val characters = response.results.map { it.toCharacterDomain() }
             val nextKey = if (response.info.next.isNullOrBlank()) {
                 null

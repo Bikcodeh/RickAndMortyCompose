@@ -2,6 +2,8 @@ package com.bikcode.rickandmortycompose.di
 
 import com.bikcode.rickandmortycompose.data.remote.CharacterService
 import com.bikcode.rickandmortycompose.data.remote.EpisodeService
+import com.bikcode.rickandmortycompose.data.repository.RemoteDataSourceImpl
+import com.bikcode.rickandmortycompose.domain.repository.RemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,6 +53,11 @@ object NetworkModule {
     @Singleton
     fun episodeServiceProvider(retrofit: Retrofit): EpisodeService =
         retrofit.create(EpisodeService::class.java)
+
+    @Provides
+    @Singleton
+    fun remoteDataSourceProvider(characterService: CharacterService): RemoteDataSource =
+        RemoteDataSourceImpl(characterService)
 
 }
 
