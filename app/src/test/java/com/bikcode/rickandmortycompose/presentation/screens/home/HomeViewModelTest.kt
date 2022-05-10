@@ -13,6 +13,7 @@ import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
@@ -30,7 +31,7 @@ class HomeViewModelTest {
     @MockK(relaxed = true)
     lateinit var characterRepository: CharacterRepository
 
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
@@ -39,7 +40,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `given a status should return a character list`() = runTest {
+    fun `filteredCharacters given a status should return a character list`() = runTest {
         //Given
         val response = listOf(character)
 
@@ -61,7 +62,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `given status all should return a empty list`() = runTest {
+    fun `filteredCharacters given status all should return a empty list`() = runTest {
         //When
         homeViewModel.filterCharacters("all")
 
@@ -76,7 +77,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `given a string should return a character list`() = runTest {
+    fun `searchedCharacters given a string should return a character list`() = runTest {
         //Given
         val data = listOf(character)
         coEvery { characterRepository.searchCharacters("rick") } returns flowOf(data)
@@ -93,7 +94,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `given a string should return a empty list`() = runTest {
+    fun `searchedCharacters given a string should return a empty list`() = runTest {
         //Given
         coEvery { characterRepository.searchCharacters("rick") } returns flowOf(emptyList<Character>())
 

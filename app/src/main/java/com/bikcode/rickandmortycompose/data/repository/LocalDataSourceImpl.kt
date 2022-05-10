@@ -7,6 +7,11 @@ import com.bikcode.rickandmortycompose.domain.repository.LocalDataSource
 import kotlinx.coroutines.flow.Flow
 
 class LocalDataSourceImpl(private val characterDao: CharacterDao) : LocalDataSource {
+
+    override suspend fun insertAll(characters: List<Character>) {
+        characterDao.insertAll(characters)
+    }
+
     override fun getAllCharacters(): PagingSource<Int, Character> {
         return characterDao.getAllCharacters()
     }

@@ -14,6 +14,7 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.*
 
@@ -31,17 +32,16 @@ class DetailViewModelTest {
 
     private lateinit var detailViewModel: DetailViewModel
 
+    private val dispatcher = UnconfinedTestDispatcher()
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
         detailViewModel = DetailViewModel(
             getSelectedCharacterUC,
-            getEpisodesUC
+            getEpisodesUC,
+            dispatcher
         )
-    }
-
-    @After
-    fun tearDown() {
     }
 
     @Test

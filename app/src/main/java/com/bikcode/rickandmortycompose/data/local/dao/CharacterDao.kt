@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CharacterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(repos: List<Character>)
+    suspend fun insertAll(characters: List<Character>)
 
     @Query("SELECT * FROM character")
     fun getAllCharacters(): PagingSource<Int, Character>

@@ -51,7 +51,7 @@ class HomeViewModel @Inject constructor(
     fun searchCharacters(text: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            viewModelScope.launch {
+            viewModelScope.launch(dispatcher) {
                 characterRepository.searchCharacters(text = text)
                     .map { it.map { character -> character.toCharacterDTO() } }
                     .collect {

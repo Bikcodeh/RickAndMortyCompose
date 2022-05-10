@@ -28,6 +28,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.bikcode.rickandmortycompose.R
 import com.bikcode.rickandmortycompose.data.model.CharacterDTO
@@ -159,6 +160,7 @@ fun handlePagingResult(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun CharacterItem(
     character: CharacterDTO,
