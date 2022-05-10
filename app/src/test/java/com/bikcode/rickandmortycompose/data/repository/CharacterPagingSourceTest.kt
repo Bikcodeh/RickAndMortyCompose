@@ -3,11 +3,13 @@ package com.bikcode.rickandmortycompose.data.repository
 import androidx.paging.PagingSource
 import com.bikcode.rickandmortycompose.data.model.ApiResponse
 import com.bikcode.rickandmortycompose.data.model.CharacterDTO
+import com.bikcode.rickandmortycompose.data.model.EpisodeDTO
 import com.bikcode.rickandmortycompose.data.model.InfoDTO
 import com.bikcode.rickandmortycompose.domain.model.Character
 import com.bikcode.rickandmortycompose.domain.model.Location
 import com.bikcode.rickandmortycompose.domain.model.Origin
 import com.bikcode.rickandmortycompose.domain.repository.RemoteDataSource
+import com.bikcode.rickandmortycompose.util.episodeDTO
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -205,6 +207,10 @@ class CharacterPagingSourceTest {
                     throw exceptionHttp
                 }
             }
+        }
+
+        override suspend fun getEpisode(url: String): EpisodeDTO {
+            return episodeDTO
         }
     }
 }

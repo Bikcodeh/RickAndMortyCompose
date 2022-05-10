@@ -3,11 +3,10 @@ package com.bikcode.rickandmortycompose.data.repository
 import androidx.paging.ExperimentalPagingApi
 import app.cash.turbine.test
 import com.bikcode.rickandmortycompose.data.local.RickAndMortyDatabase
-import com.bikcode.rickandmortycompose.data.remote.CharacterService
-import com.bikcode.rickandmortycompose.data.remote.EpisodeService
 import com.bikcode.rickandmortycompose.domain.model.Character
 import com.bikcode.rickandmortycompose.domain.repository.CharacterRepository
 import com.bikcode.rickandmortycompose.domain.repository.LocalDataSource
+import com.bikcode.rickandmortycompose.domain.repository.RemoteDataSource
 import com.bikcode.rickandmortycompose.rules.CoroutineTestRule
 import com.bikcode.rickandmortycompose.util.Resource
 import com.bikcode.rickandmortycompose.util.character
@@ -34,10 +33,7 @@ class CharacterRepositoryImplTest {
     private lateinit var repository: CharacterRepository
 
     @RelaxedMockK
-    lateinit var characterService: CharacterService
-
-    @RelaxedMockK
-    lateinit var episodeService: EpisodeService
+    lateinit var remoteDataSource: RemoteDataSource
 
     @RelaxedMockK
     lateinit var rickAndMortyDatabase: RickAndMortyDatabase
@@ -49,8 +45,7 @@ class CharacterRepositoryImplTest {
     fun setUp() {
         MockKAnnotations.init(this)
         repository = CharacterRepositoryImpl(
-            characterService,
-            episodeService,
+            remoteDataSource,
             rickAndMortyDatabase,
             localDataSource
         )
@@ -202,7 +197,7 @@ class CharacterRepositoryImplTest {
     @Test
     fun `getEpisode given a list of urls of episodes should return a list of episodes`() = runTest {
         //Given
-        coEvery { episodeService.getEpisode("test") } returns episodeDTO
+        coEvery { remoteDataSource.getEpisode("test") } returns episodeDTO
 
         //When
         val result = repository.getEpisode(listOf("test"))
@@ -223,13 +218,13 @@ class CharacterRepositoryImplTest {
             )
             awaitComplete()
         }
-        coVerify { episodeService.getEpisode("test") }
+        coVerify { remoteDataSource.getEpisode("test") }
     }
 
     @Test
     fun `getEpisode should catch a IOException and return a error resource`() = runTest {
         //Given
-        coEvery { episodeService.getEpisode("test") }.throws(IOException("Error"))
+        coEvery { remoteDataSource.getEpisode("test") }.throws(IOException("Error"))
 
         //When
         val result = repository.getEpisode(listOf("test"))
@@ -250,7 +245,7 @@ class CharacterRepositoryImplTest {
             )
             awaitComplete()
         }
-        coVerify { episodeService.getEpisode("test") }
+        coVerify { remoteDataSource.getEpisode("test") }
     }
 
     @Test
@@ -258,7 +253,7 @@ class CharacterRepositoryImplTest {
         //Given
         val exception = mockk<HttpException>()
         every { exception.printStackTrace() } returns Unit
-        coEvery { episodeService.getEpisode("test") }.throws(exception)
+        coEvery { remoteDataSource.getEpisode("test") }.throws(exception)
 
         //When
         val result = repository.getEpisode(listOf("test"))
@@ -279,14 +274,14 @@ class CharacterRepositoryImplTest {
             )
             awaitComplete()
         }
-        coVerify { episodeService.getEpisode("test") }
+        coVerify { remoteDataSource.getEpisode("test") }
         verify { exception.printStackTrace() }
     }
 
     @Test
     fun `getEpisode should catch a unexpected exception and return a error resource`() = runTest {
         //Given
-        coEvery { episodeService.getEpisode("test") }.throws(Exception("Error"))
+        coEvery { remoteDataSource.getEpisode("test") }.throws(Exception("Error"))
 
         //When
         val result = repository.getEpisode(listOf("test"))
@@ -307,6 +302,6 @@ class CharacterRepositoryImplTest {
             )
             awaitComplete()
         }
-        coVerify { episodeService.getEpisode("test") }
+        coVerify { remoteDataSource.getEpisode("test") }
     }
 }

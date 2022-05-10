@@ -6,12 +6,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.bikcode.rickandmortycompose.data.local.RickAndMortyDatabase
 import com.bikcode.rickandmortycompose.data.model.toEpisode
-import com.bikcode.rickandmortycompose.data.remote.CharacterService
-import com.bikcode.rickandmortycompose.data.remote.EpisodeService
 import com.bikcode.rickandmortycompose.domain.model.Character
 import com.bikcode.rickandmortycompose.domain.model.Episode
 import com.bikcode.rickandmortycompose.domain.repository.CharacterRepository
 import com.bikcode.rickandmortycompose.domain.repository.LocalDataSource
+import com.bikcode.rickandmortycompose.domain.repository.RemoteDataSource
 import com.bikcode.rickandmortycompose.util.Resource
 import kotlinx.coroutines.flow.*
 import retrofit2.HttpException
@@ -20,8 +19,7 @@ import javax.inject.Inject
 
 @ExperimentalPagingApi
 class CharacterRepositoryImpl @Inject constructor(
-    private val characterService: CharacterService,
-    private val episodeService: EpisodeService,
+    private val remoteDataSource: RemoteDataSource,
     private val rickAndMortyDatabase: RickAndMortyDatabase,
     private val localDataSource: LocalDataSource
 ) : CharacterRepository {
@@ -37,7 +35,7 @@ class CharacterRepositoryImpl @Inject constructor(
             ),
             remoteMediator = CharacterRemoteMediator(
                 rickAndMortyDatabase = rickAndMortyDatabase,
-                characterService = characterService
+                remoteDataSource = remoteDataSource
             ),
             pagingSourceFactory = characterSourceFactory
         ).flow
@@ -57,7 +55,7 @@ class CharacterRepositoryImpl @Inject constructor(
 
             try {
                 val episodes = episodesUrl.asFlow().map { episode ->
-                    episodeService.getEpisode(episode)
+                    remoteDataSource.getEpisode(episode)
                 }.toCollection(mutableListOf())
 
                 emit(Resource.Success(data = episodes.map { it.toEpisode() }))

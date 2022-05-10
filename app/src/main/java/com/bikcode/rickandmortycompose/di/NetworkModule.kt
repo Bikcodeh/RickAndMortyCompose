@@ -56,8 +56,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun remoteDataSourceProvider(characterService: CharacterService): RemoteDataSource =
-        RemoteDataSourceImpl(characterService)
+    fun remoteDataSourceProvider(
+        characterService: CharacterService,
+        episodeService: EpisodeService
+    ): RemoteDataSource =
+        RemoteDataSourceImpl(characterService, episodeService)
 
 }
 
