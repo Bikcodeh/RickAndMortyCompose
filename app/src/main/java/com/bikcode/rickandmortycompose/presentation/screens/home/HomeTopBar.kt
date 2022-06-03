@@ -21,7 +21,6 @@ import com.bikcode.rickandmortycompose.ui.theme.topAppBarContentColor
 @Composable
 fun HomeTopBar(homeViewModel: HomeViewModel = hiltViewModel()) {
     var showMenu by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     TopAppBar(
         title = {

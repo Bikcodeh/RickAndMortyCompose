@@ -7,6 +7,7 @@ import com.bikcode.rickandmortycompose.data.remote.EpisodeService
 import com.bikcode.rickandmortycompose.data.repository.CharacterRepositoryImpl
 import com.bikcode.rickandmortycompose.domain.repository.CharacterRepository
 import com.bikcode.rickandmortycompose.domain.repository.LocalDataSource
+import com.bikcode.rickandmortycompose.domain.repository.RemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,14 +22,12 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun characterRepositoryProvider(
-        characterService: CharacterService,
+        remoteDataSource: RemoteDataSource,
         rickAndMortyDatabase: RickAndMortyDatabase,
-        episodeService: EpisodeService,
         localDataSource: LocalDataSource
     ): CharacterRepository {
         return CharacterRepositoryImpl(
-            characterService = characterService,
-            episodeService = episodeService,
+            remoteDataSource = remoteDataSource,
             rickAndMortyDatabase = rickAndMortyDatabase,
             localDataSource = localDataSource
         )

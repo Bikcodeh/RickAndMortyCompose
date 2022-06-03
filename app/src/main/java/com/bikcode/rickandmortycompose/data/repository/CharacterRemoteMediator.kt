@@ -6,9 +6,9 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.bikcode.rickandmortycompose.data.local.RickAndMortyDatabase
-import com.bikcode.rickandmortycompose.data.remote.CharacterService
 import com.bikcode.rickandmortycompose.domain.model.Character
 import com.bikcode.rickandmortycompose.domain.model.RemoteKeys
+import com.bikcode.rickandmortycompose.domain.repository.RemoteDataSource
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -16,7 +16,7 @@ import java.io.IOException
 @OptIn(ExperimentalPagingApi::class)
 class CharacterRemoteMediator(
     private val rickAndMortyDatabase: RickAndMortyDatabase,
-    private val characterService: CharacterService
+    private val remoteDataSource: RemoteDataSource
 ) : RemoteMediator<Int, Character>() {
 
     private val characterDao = rickAndMortyDatabase.characterDao()
@@ -54,7 +54,7 @@ class CharacterRemoteMediator(
         }
 
         try {
-            val response = characterService.getAllCharacters(page = page)
+            val response = remoteDataSource.getAllCharacters(page = page)
 
             val characters = response.results.map { it.toCharacterDomain() }
             val endOfPagination = characters.isEmpty()

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.bikcode.rickandmortycompose.R
 import com.bikcode.rickandmortycompose.data.model.CharacterDTO
@@ -61,6 +62,7 @@ fun DetailScreen(
 }
 
 
+@ExperimentalCoilApi
 @Composable
 fun DetailContent(character: CharacterDTO, state: DetailState, onCloseClicked: () -> Unit) {
     val modifier = Modifier
