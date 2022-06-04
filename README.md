@@ -60,27 +60,6 @@ The application is built using Clean Architeture pattern based on [Architecture 
 - Data: This layer contains the data layer of the application. It contains the database, network and the repository implementation.
 - Presentation: This layer contains the presentation layer of the application.
 
-The organization of the application is based on the following package diagram:
-
-  app/
-    ├── data/
-    │	├── local/
-    │	├── model/
-    │	├── remote/
-    │   └── repository/
-    ├── di/
-    ├── domain/
-    │   └── model/
-    │   └── repository/
-    │   └── use_case/
-    ├── navigation/
-    ├── presentation/
-    │   └── components/
-    │        └── screens/
-    │        └── util/
-    └── ui/
-
-
 ## License
 
 MIT
