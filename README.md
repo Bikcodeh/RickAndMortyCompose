@@ -42,7 +42,7 @@ This app is built to practice some concepts, skills and new technologies to me. 
 ## Screnshots
 |                    Main Screen                    |                        Detail                         |                       Detail episodes list                   
 | :-----------------------------------------------: | :---------------------------------------------------: | :--------------------------------------------------------: 
-|   ![Home](assets/home.png?raw=true)   |   ![Favorites](assets/detail.png?raw=true)   |   ![Post Detail](assets/detail_epidodes.png?raw=true)
+|   ![Home](assets/home.png?raw=true)   |   ![Favorites](assets/detail.png?raw=true)   |   ![Post Detail](assets/detail_episodes.png?raw=true)
 
 ## Screnshots Dark Mode
 
