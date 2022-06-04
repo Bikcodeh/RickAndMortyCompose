@@ -39,12 +39,12 @@ This app is built to practice some concepts, skills and new technologies to me. 
 - Unit testing (Mockk, Turbine)
 - Code coverage (Jacoco)
 
-## Screnshots
+## Screenshots
 |                    Main Screen                    |                        Detail                         |                       Detail episodes list                   
 | :-----------------------------------------------: | :---------------------------------------------------: | :--------------------------------------------------------: 
 |   ![Home](assets/home.png?raw=true)   |   ![Favorites](assets/detail.png?raw=true)   |   ![Post Detail](assets/detail_episodes.png?raw=true)
 
-## Screnshots Dark Mode
+## Screenshots Dark Mode
 
 |                    Main Screen                    |                        Detail                         |
 | :-----------------------------------------------: | :---------------------------------------------------: |
