@@ -62,7 +62,7 @@ The application is built using Clean Architeture pattern based on [Architecture 
 
 The organization of the application is based on the following package diagram:
 
-   app/
+  app/
     ├── data/
     │	├── local/
     │	├── model/
@@ -77,8 +77,6 @@ The organization of the application is based on the following package diagram:
     ├── presentation/
     │   └── components/
     │        └── screens/
-    │             └── detail/
-    │             └── home/
     │        └── util/
     └── ui/
 
